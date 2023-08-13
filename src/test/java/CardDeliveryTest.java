@@ -107,19 +107,18 @@ public class CardDeliveryTest {
 
     }
 
-//    @Test
-//    void shouldClickCheckbox() {
-//        Configuration.holdBrowserOpen = true;
-//        open("http://localhost:9999");
-//        $("[data-test-id='city'] input").setValue("Владивосток");
-//        String currentDate = generateDate(5, "dd.MM.yyyy");
-//        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
-//        $("[data-test-id='date'] input").sendKeys(currentDate);
-//        $("[data-test-id='name'] input").sendKeys("Гаврилов Гаврила");
-//        $("[data-test-id='phone'] input").sendKeys("+79638555741");
-//        $("button.button").click(false); //логика такая: если чекбокс не кликнуть, не нажимается кнопка. но эта логика не работает
-//        // вероятно, нужно как-то использовать input_invalid вместе с "[data-test-id='agreement'] .checkbox__box".
-//
-//          }
-}
+    @Test
+    void shouldClickCheckbox() {
+        Configuration.holdBrowserOpen = true;
+        open("http://localhost:9999");
+        $("[data-test-id='city'] input").setValue("Владивосток");
+        String currentDate = generateDate(5, "dd.MM.yyyy");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
+        $("[data-test-id='date'] input").sendKeys(currentDate);
+        $("[data-test-id='name'] input").sendKeys("Гаврилов Гаврила");
+        $("[data-test-id='phone'] input").sendKeys("+79638555741");
+        $("button.button").click();
+        $(".input_invalid").shouldBe(Condition.visible);
 
+    }
+}
