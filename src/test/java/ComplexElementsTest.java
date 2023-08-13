@@ -1,9 +1,11 @@
 import com.codeborne.selenide.Condition;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.exactText;
@@ -34,10 +36,10 @@ public class ComplexElementsTest {
         $("span[data-test-id='city'] input").setValue("Вл");
         $$("div.popup__content div").find(exactText("Владивосток")).click();
         $("span[data-test-id='date'] button").click();
-        while ($("div.calendar__name").getText().equals(MONTH_OF_YEAR)) {
-            $$("div.calendar__arrow.calendar__arrow_direction_right").get(1).click();
-        }
-
+        String currentDate = generateDate(3, "mm.yyyy"); // дата заявки (=сегодня+3 дня)
+        String bookingDate = generateDate(7,"mm.yyyy"); // дата бронирования встречи (=сегодня+7 дней)
+        Assertions.assertFalse(currentDate.equals(bookingDate)); // сравниваем даты
+        $("[data-step='1']").click(); // перелистнуть календарь, если даты не равны
         $$("table.calendar__layout td").find(text(DAY_OF_MONTH.name())).click();
         $("[data-test-id='name'] input").setValue("Кузьма Кузьмичев");
         $("[data-test-id='phone'] input").setValue("+79658888111");
@@ -46,7 +48,7 @@ public class ComplexElementsTest {
         $("div.notification__content")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Встреча успешно забронирована на " + LocalDate.now()
-                        .plusDays(7).format(DateTimeFormatter.ofPattern(dd.mm.yyyy)));
+                        .plusDays(7).format(DateTimeFormatter.ofPattern("dd.mm.yyyy"))));
     }
 
 }
