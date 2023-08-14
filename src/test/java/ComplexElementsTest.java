@@ -2,6 +2,7 @@ import com.codeborne.selenide.Condition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Date;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -23,10 +24,12 @@ import static java.time.temporal.ChronoField.*;
 public class ComplexElementsTest {
 
 
-    @BeforeEach
-
-    public String generateDate(long addDays, String pattern) {
+    private String generateDate( int addDays, String pattern) {
         return LocalDate.now().plusDays(addDays).format(DateTimeFormatter.ofPattern(pattern));
+    }
+    int dayOfMonth = getDayOfMonth();
+    private int getDayOfMonth() {
+        return dayOfMonth;
     }
 
 
@@ -36,11 +39,12 @@ public class ComplexElementsTest {
         $("span[data-test-id='city'] input").setValue("Вл");
         $$("div.popup__content div").find(exactText("Владивосток")).click();
         $("span[data-test-id='date'] button").click();
-        String currentDate = generateDate(3, "mm.yyyy"); // дата заявки (=сегодня+3 дня)
-        String bookingDate = generateDate(7,"mm.yyyy"); // дата бронирования встречи (=сегодня+7 дней)
-        Assertions.assertFalse(currentDate.equals(bookingDate)); // сравниваем даты
-        $("[data-step='1']").click(); // перелистнуть календарь, если даты не равны
-        $$("table.calendar__layout td").find(text(DAY_OF_MONTH.name())).click();
+        String currentDate = generateDate(3, "MM.yyyy"); // дата заявки (=сегодня+3 дня)
+        String bookingDate = generateDate(7,"MM.yyyy"); // дата бронирования встречи (=сегодня+7 дней)
+        if (!currentDate.equals(bookingDate)) {// сравниваем даты
+            $("[data-step='1']").click();// перелистнуть календарь, если даты не равны
+        }
+        $$("table.calendar__layout td").find (text (String.valueOf(dayOfMonth))).click();
         $("[data-test-id='name'] input").setValue("Кузьма Кузьмичев");
         $("[data-test-id='phone'] input").setValue("+79658888111");
         $("[data-test-id='agreement']").click();
@@ -48,8 +52,9 @@ public class ComplexElementsTest {
         $("div.notification__content")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Встреча успешно забронирована на " + LocalDate.now()
-                        .plusDays(7).format(DateTimeFormatter.ofPattern("dd.mm.yyyy"))));
+                        .plusDays(3).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
     }
+
 
 }
 
